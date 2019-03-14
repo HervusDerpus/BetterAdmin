@@ -19,3 +19,7 @@ D:\Files\Documents\Custom Plugins\BetterAdmin\BetterAdmin\obj\Debug\BetterAdmin.
 D:\Files\Documents\Custom Plugins\BetterAdmin\BetterAdmin\obj\Debug\BetterAdmin.csproj.CopyComplete
 D:\Files\Documents\Custom Plugins\BetterAdmin\BetterAdmin\obj\Debug\BetterAdmin.dll
 D:\Files\Documents\Custom Plugins\BetterAdmin\BetterAdmin\obj\Debug\BetterAdmin.pdb
+D:\Files\Documents\Custom Plugins\BetterAdmin.dll
+D:\Files\Documents\Custom Plugins\BetterAdmin.pdb
+D:\Files\Documents\Custom Plugins\Builds\BetterAdmin\BetterAdmin.dll
+D:\Files\Documents\Custom Plugins\Builds\BetterAdmin\BetterAdmin.pdb
