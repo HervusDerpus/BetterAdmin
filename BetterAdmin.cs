@@ -10,26 +10,32 @@ namespace BetterAdmin
     [PluginDetails(
         author = "Phoenix",
         name = "BetterAdmin",
-        description = "Plugin that improves administation capabilties",
+        description = "Plugin with a bunch of config options to help server administration",
         id = "phoenix.betteradmin",
-        version = "1.0",
+        version = "1.1.0.0",
         SmodMajor = 3,
         SmodMinor = 3,
         SmodRevision = 0
         )]
     class Betteradmin : Plugin
     {
-        public int[] itemblacklist { get; private set; }
-        public int[] roleblacklist { get; private set; }
-        public string[] itemblacklistranks { get; private set; }
-        public string[] roleblacklistranks { get; private set; }
+        public int[] Itemblacklist { get; private set; }
+        public int[] Roleblacklist { get; private set; }
+        public string[] Itemblacklistranks { get; private set; }
+        public string[] Roleblacklistranks { get; private set; }
 
-        public bool anticamp106 { get; private set; }
-        public bool anticamp079 { get; private set; }
-        public bool anticampnuke { get; private set; }
+        public bool Anticamp106 { get; private set; }
+        public bool Anticamp079 { get; private set; }
+        public bool Anticampnuke { get; private set; }
 
-        public bool idisable { get; private set; }
-        public bool rdisable { get; private set; }
+        //public bool ConnectSpam { get; private set; }
+        //public int ConnectSpamLength { get; private set; }
+
+        public bool Idisable { get; private set; }
+        public bool Rdisable { get; private set; }
+
+        public bool Staffresslot { get; private set; }
+        public bool Gmodresslot { get; private set; }
 
         public override void OnDisable()
 		{
@@ -54,23 +60,35 @@ namespace BetterAdmin
             this.AddConfig(new ConfigSetting("ba_anticamp_079", true, SettingType.BOOL, true, "Locks the 079 chamber doors open upon activating all 5 generators"));
             this.AddConfig(new ConfigSetting("ba_anticamp_nuke", true, SettingType.BOOL, true, "Locks the nuke surface doors open upon the nuke being canceled"));
 
+            //this.AddConfig(new ConfigSetting("ba_connectspam_ban", true, SettingType.BOOL, true, "Enable the connection spam ban setting, which bans anyone who tries to connect to a full server"));
+            //this.AddConfig(new ConfigSetting("ba_connectspam_ban_length", 1, SettingType.NUMERIC, true, "Length of the ban given upon connecting to a full server"));
+
+            this.AddConfig(new ConfigSetting("ba_staff_resslot", false, SettingType.BOOL, true, "Automatically creates a reserved slot for studio staff who join the server"));
+            this.AddConfig(new ConfigSetting("ba_gmod_resslot", true, SettingType.BOOL, true, "Automatically creates a reserved slot for global moderators who join the server"));
+
             this.AddConfig(new ConfigSetting("ba_item_disable", false, SettingType.BOOL, true, "Disables the BetterAdmin item blocker"));
             this.AddConfig(new ConfigSetting("ba_role_disable", false, SettingType.BOOL, true, "Disables the BetterAdmin role blocker"));
         }
 
         public void RefreshConfig()
         {
-            itemblacklist = GetConfigIntList("ba_items_blacklist");
-            roleblacklist = GetConfigIntList("ba_roles_blacklist");
-            itemblacklistranks = GetConfigList("ba_items_blacklist_ranks");
-            roleblacklistranks = GetConfigList("ba_roles_blacklist_ranks");
+            Itemblacklist = GetConfigIntList("ba_items_blacklist");
+            Roleblacklist = GetConfigIntList("ba_roles_blacklist");
+            Itemblacklistranks = GetConfigList("ba_items_blacklist_ranks");
+            Roleblacklistranks = GetConfigList("ba_roles_blacklist_ranks");
 
-            anticamp106 = GetConfigBool("ba_anticamp_106");
-            anticamp079 = GetConfigBool("ba_anticamp_079");
-            anticampnuke = GetConfigBool("ba_anticamp_nuke");
+            Anticamp106 = GetConfigBool("ba_anticamp_106");
+            Anticamp079 = GetConfigBool("ba_anticamp_079");
+            Anticampnuke = GetConfigBool("ba_anticamp_nuke");
 
-            idisable = GetConfigBool("ba_item_disable");
-            rdisable = GetConfigBool("ba_role_disable");
+            //ConnectSpam = GetConfigBool("ba_connectspam_ban");
+            //ConnectSpamLength = GetConfigInt("ba_connectspam_ban_length");
+
+            Idisable = GetConfigBool("ba_item_disable");
+            Rdisable = GetConfigBool("ba_role_disable");
+
+            Staffresslot = GetConfigBool("ba_staff_resslot");
+            Gmodresslot = GetConfigBool("ba_gmod_resslot");
         }
 	}
 }
