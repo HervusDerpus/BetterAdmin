@@ -20,20 +20,10 @@ namespace BetterAdmin
 
         public void OnPlayerJoin(PlayerJoinEvent player)
         {
-            if (plugin.Staffresslot == true)
+            if (plugin.Staffresslot == true && player.Player.GetAuthToken().Contains("Bypass geo restrictions: YES") && !ReservedSlot.ContainsSteamID(player.Player.SteamId))
             {
-                //Creates slots for global moderators (with a comment saying so)
-                if (player.Player.GetAuthToken().Contains("Bypass bans: YES") && !ReservedSlot.ContainsSteamID(player.Player.SteamId))
-                {
-                    plugin.Info("Added " + player.Player.Name + " to the reserved slots");
-                    new ReservedSlot(player.Player.IpAddress, player.Player.SteamId, " Studio Global Security - " + player.Player.Name).AppendToFile();
-                }
-                //Creates slots for normal studio staff (Generic comment)
-                else if (player.Player.GetAuthToken().Contains("Bypass geo restrictions: YES") && !ReservedSlot.ContainsSteamID(player.Player.SteamId))
-                {
-                    plugin.Info("Added " + player.Player.Name + " to the reserved slots");
-                    new ReservedSlot(player.Player.IpAddress, player.Player.SteamId, " Studio Staff - " + player.Player.Name).AppendToFile();
-                }
+                plugin.Info("Added " + player.Player.Name + " to the reserved slots");
+                new ReservedSlot(player.Player.IpAddress, player.Player.SteamId, " Studio Staff - " + player.Player.Name).AppendToFile();
             }
             else if (plugin.Gmodresslot == true && player.Player.GetAuthToken().Contains("Bypass bans: YES") && !ReservedSlot.ContainsSteamID(player.Player.SteamId))
             {
