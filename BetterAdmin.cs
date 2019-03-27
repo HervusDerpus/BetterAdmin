@@ -12,7 +12,7 @@ namespace BetterAdmin
         name = "BetterAdmin",
         description = "Plugin with a bunch of config options to help server administration",
         id = "phoenix.betteradmin",
-        version = "1.1.0.0",
+        version = "1.1.1",
         SmodMajor = 3,
         SmodMinor = 3,
         SmodRevision = 0
@@ -28,14 +28,14 @@ namespace BetterAdmin
         public bool Anticamp079 { get; private set; }
         public bool Anticampnuke { get; private set; }
 
-        //public bool ConnectSpam { get; private set; }
-        //public int ConnectSpamLength { get; private set; }
-
         public bool Idisable { get; private set; }
         public bool Rdisable { get; private set; }
 
         public bool Staffresslot { get; private set; }
         public bool Gmodresslot { get; private set; }
+
+        //public bool ConnectSpam { get; private set; }
+        //public int ConnectSpamLength { get; private set; }
 
         public override void OnDisable()
 		{
@@ -55,19 +55,19 @@ namespace BetterAdmin
             this.AddConfig(new ConfigSetting("ba_roles_blacklist", new[] { 14 }, SettingType.NUMERIC_LIST, true, "List of roles that should not be able to be spawned"));
             this.AddConfig(new ConfigSetting("ba_items_blacklist_ranks", new[] { "owner" }, SettingType.LIST, true, "List of ranks that bypass the item blacklist"));
             this.AddConfig(new ConfigSetting("ba_roles_blacklist_ranks", new[] { "owner" }, SettingType.LIST, true, "List of ranks that bypass the role blacklist"));
+            this.AddConfig(new ConfigSetting("ba_item_disable", false, SettingType.BOOL, true, "Disables the BetterAdmin item blocker"));
+            this.AddConfig(new ConfigSetting("ba_role_disable", false, SettingType.BOOL, true, "Disables the BetterAdmin role blocker"));
 
             this.AddConfig(new ConfigSetting("ba_anticamp_106", true, SettingType.BOOL, true, "Locks the 106 chamber doors open upon 106 being recontained"));
             this.AddConfig(new ConfigSetting("ba_anticamp_079", true, SettingType.BOOL, true, "Locks the 079 chamber doors open upon activating all 5 generators"));
             this.AddConfig(new ConfigSetting("ba_anticamp_nuke", true, SettingType.BOOL, true, "Locks the nuke surface doors open upon the nuke being canceled"));
 
-            //this.AddConfig(new ConfigSetting("ba_connectspam_ban", true, SettingType.BOOL, true, "Enable the connection spam ban setting, which bans anyone who tries to connect to a full server"));
-            //this.AddConfig(new ConfigSetting("ba_connectspam_ban_length", 1, SettingType.NUMERIC, true, "Length of the ban given upon connecting to a full server"));
-
             this.AddConfig(new ConfigSetting("ba_staff_resslot", false, SettingType.BOOL, true, "Automatically creates a reserved slot for studio staff who join the server"));
             this.AddConfig(new ConfigSetting("ba_gmod_resslot", true, SettingType.BOOL, true, "Automatically creates a reserved slot for global moderators who join the server"));
 
-            this.AddConfig(new ConfigSetting("ba_item_disable", false, SettingType.BOOL, true, "Disables the BetterAdmin item blocker"));
-            this.AddConfig(new ConfigSetting("ba_role_disable", false, SettingType.BOOL, true, "Disables the BetterAdmin role blocker"));
+            //this.AddConfig(new ConfigSetting("ba_connectspam_ban", true, SettingType.BOOL, true, "Enable the connection spam ban setting, which bans anyone who tries to connect to a full server"));
+            //this.AddConfig(new ConfigSetting("ba_connectspam_ban_length", 1, SettingType.NUMERIC, true, "Length of the ban given upon connecting to a full server"));
+
         }
 
         public void RefreshConfig()
@@ -81,14 +81,14 @@ namespace BetterAdmin
             Anticamp079 = GetConfigBool("ba_anticamp_079");
             Anticampnuke = GetConfigBool("ba_anticamp_nuke");
 
-            //ConnectSpam = GetConfigBool("ba_connectspam_ban");
-            //ConnectSpamLength = GetConfigInt("ba_connectspam_ban_length");
-
             Idisable = GetConfigBool("ba_item_disable");
             Rdisable = GetConfigBool("ba_role_disable");
 
             Staffresslot = GetConfigBool("ba_staff_resslot");
             Gmodresslot = GetConfigBool("ba_gmod_resslot");
+
+            //ConnectSpam = GetConfigBool("ba_connectspam_ban");
+            //ConnectSpamLength = GetConfigInt("ba_connectspam_ban_length");
         }
-	}
+    }
 }

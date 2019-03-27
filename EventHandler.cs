@@ -11,22 +11,12 @@ namespace BetterAdmin
     {
         private readonly Betteradmin plugin;
 
-        //public string CrtItem;
         public string ARank;
         public string AQuery;
         public int GeneratorPowerups;
         public int Itemrole;
 
-        public EventHandler(Betteradmin plugin) => this.plugin = plugin; //Expression bodies can also be used
-
-        //public void OnShoot(PlayerShootEvent ev)
-        //{
-        //    if (ev.Player.TeamRole.Role == Role.TUTORIAL)
-        //    {
-        //        ev.Player.ThrowGrenade(0, true, Smod2.API.Vector.Zero, false, ev.Player.GetPosition(), true, 10);
-        //    }
-        //}
-
+        public EventHandler(Betteradmin plugin) => this.plugin = plugin; 
 
         public void OnPlayerJoin(PlayerJoinEvent player)
         {
@@ -83,26 +73,26 @@ namespace BetterAdmin
             if (plugin.Anticamp106 == true)
             {
                 List<Smod2.API.Door> doors = plugin.Server.Map.GetDoors();
-                try { doors.First(x => x.Name == "106_PRIMARY").Locked = true; } catch { }
-                try { doors.First(x => x.Name == "106_PRIMARY").Open = true; } catch { }
-                try { doors.First(x => x.Name == "106_SECONDARY").Locked = true; } catch { }
-                try { doors.First(x => x.Name == "106_SECONDARY").Open = true; } catch { }
-                try { doors.First(x => x.Name == "106_BOTTOM").Locked = true; } catch { }
-                try { doors.First(x => x.Name == "106_BOTTOM").Open = true; } catch { }
+                try { doors.First(x => x.Name == "106_PRIMARY").Locked = true; } catch { plugin.Warn("UNABLE TO OPEN 106_PRIMARY"); }
+                try { doors.First(x => x.Name == "106_PRIMARY").Open = true; } catch { plugin.Warn("UNABLE TO LOCK 106_PRIMARY"); }
+                try { doors.First(x => x.Name == "106_SECONDARY").Locked = true; } catch { plugin.Warn("UNABLE TO OPEN 106_SECONDARY"); }
+                try { doors.First(x => x.Name == "106_SECONDARY").Open = true; } catch { plugin.Warn("UNABLE TO LOCK 106_SECONDARY"); }
+                try { doors.First(x => x.Name == "106_BOTTOM").Locked = true; } catch { plugin.Warn("UNABLE TO OPEN 106_BOTTOM"); }
+                try { doors.First(x => x.Name == "106_BOTTOM").Open = true; } catch { plugin.Warn("UNABLE TO LOCK 106_BOTTOM"); }
             }
         }
 
         public void OnGeneratorFinish(GeneratorFinishEvent genevent)
         {
-            GeneratorPowerups++; ;
+            GeneratorPowerups++;
 
             if (GeneratorPowerups == 5 && plugin.Anticamp079 == true)
             {
                 List<Smod2.API.Door> doors = plugin.Server.Map.GetDoors();
-                try { doors.First(x => x.Name == "079_FIRST").Locked = true; } catch { }
-                try { doors.First(x => x.Name == "079_FIRST").Open = true; } catch { }
-                try { doors.First(x => x.Name == "079_SECOND").Locked = true; } catch { }
-                try { doors.First(x => x.Name == "079_SECOND").Open = true; } catch { }
+                doors.First(x => x.Name == "079_FIRST").Locked = true;
+                doors.First(x => x.Name == "079_FIRST").Open = true;
+                doors.First(x => x.Name == "079_SECOND").Locked = true;
+                doors.First(x => x.Name == "079_SECOND").Open = true;
             }
         }
 
@@ -111,8 +101,8 @@ namespace BetterAdmin
             if (plugin.Anticampnuke == true)
             {
                 List<Smod2.API.Door> doors = plugin.Server.Map.GetDoors();
-                try { doors.First(x => x.Name == "NUKE_SURFACE").Locked = false; } catch { }
-                try { doors.First(x => x.Name == "NUKE_SURFACE").Open = false; } catch { }
+                doors.First(x => x.Name == "NUKE_SURFACE").Locked = false;
+                doors.First(x => x.Name == "NUKE_SURFACE").Open = false;
 
             }
         }
@@ -122,8 +112,8 @@ namespace BetterAdmin
             if (plugin.Anticampnuke == true)
             {
                 List<Smod2.API.Door> doors = plugin.Server.Map.GetDoors();
-                try { doors.First(x => x.Name == "NUKE_SURFACE").Locked = true; } catch { }
-                try { doors.First(x => x.Name == "NUKE_SURFACE").Open = true; } catch { }
+                doors.First(x => x.Name == "NUKE_SURFACE").Locked = true;
+                doors.First(x => x.Name == "NUKE_SURFACE").Open = true;
             }
         }
 
