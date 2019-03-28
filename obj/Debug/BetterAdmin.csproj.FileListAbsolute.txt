@@ -23,3 +23,10 @@ D:\Files\Documents\Custom Plugins\BetterAdmin.dll
 D:\Files\Documents\Custom Plugins\BetterAdmin.pdb
 D:\Files\Documents\Custom Plugins\Builds\BetterAdmin\BetterAdmin.dll
 D:\Files\Documents\Custom Plugins\Builds\BetterAdmin\BetterAdmin.pdb
+F:\Files\Documents\Programming Projects\Builds\BetterAdmin\BetterAdmin.dll
+F:\Files\Documents\Programming Projects\Builds\BetterAdmin\BetterAdmin.pdb
+F:\Files\Documents\Programming Projects\BetterAdmin\BetterAdmin\obj\Debug\BetterAdmin.csprojAssemblyReference.cache
+F:\Files\Documents\Programming Projects\BetterAdmin\BetterAdmin\obj\Debug\BetterAdmin.csproj.CoreCompileInputs.cache
+F:\Files\Documents\Programming Projects\BetterAdmin\BetterAdmin\obj\Debug\BetterAdmin.csproj.CopyComplete
+F:\Files\Documents\Programming Projects\BetterAdmin\BetterAdmin\obj\Debug\BetterAdmin.dll
+F:\Files\Documents\Programming Projects\BetterAdmin\BetterAdmin\obj\Debug\BetterAdmin.pdb

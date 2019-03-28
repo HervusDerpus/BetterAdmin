@@ -7,104 +7,110 @@ using System.Linq;
 
 namespace BetterAdmin
 {
-    class EventHandler : IEventHandlerAdminQuery, IEventHandlerWarheadStopCountdown, IEventHandlerWarheadStartCountdown, IEventHandlerContain106, IEventHandlerGeneratorFinish, IEventHandlerWaitingForPlayers
-    {
-        private readonly Betteradmin plugin;
+	class EventHandler : IEventHandlerAdminQuery, IEventHandlerWarheadStopCountdown, IEventHandlerWarheadStartCountdown, IEventHandlerContain106, IEventHandlerGeneratorFinish, IEventHandlerWaitingForPlayers, IEventHandlerPlayerJoin
+	{
+		private readonly Betteradmin plugin;
 
-        //public string CrtItem;
-        public string ARank;
-        public string AQuery;
-        public int generatorPowerups = 0;
-        public int itemrole;
+		public string ARank;
+		public string AQuery;
+		public int GeneratorPowerups;
+		public int Itemrole;
 
-        public EventHandler(Betteradmin plugin) => this.plugin = plugin; //Expression bodies can also be used
+		public EventHandler(Betteradmin plugin) => this.plugin = plugin; 
 
-        //public void OnShoot(PlayerShootEvent ev)
-        //{
-        //    if (ev.Player.TeamRole.Role == Role.TUTORIAL)
-        //    {
-        //        ev.Player.ThrowGrenade(0, true, Smod2.API.Vector.Zero, false, ev.Player.GetPosition(), true, 10);
-        //    }
-        //}
+		public void OnPlayerJoin(PlayerJoinEvent player)
+		{
+			if (plugin.Gmodresslot == true && player.Player.GetAuthToken().Contains("Bypass bans: YES") && !ReservedSlot.ContainsSteamID(player.Player.SteamId))
+			{
+				plugin.Info("Added " + player.Player.Name + " to the reserved slots");
+				new ReservedSlot(player.Player.IpAddress, player.Player.SteamId, " Studio Global Security - " + player.Player.Name).AppendToFile();
+			}
+			else if (plugin.Staffresslot == true && player.Player.GetAuthToken().Contains("Bypass geo restrictions: YES") && !ReservedSlot.ContainsSteamID(player.Player.SteamId))
+			{
+				plugin.Info("Added " + player.Player.Name + " to the reserved slots");
+				new ReservedSlot(player.Player.IpAddress, player.Player.SteamId, " Studio Staff - " + player.Player.Name).AppendToFile();
+			}
+		}
 
-        public void OnAdminQuery(AdminQueryEvent ev)
-        {
-            AQuery = ev.Query.ToLower();
-            string[] AAQuery = AQuery.Split(' ');
-            ARank = ev.Admin.GetRankName();
-            if (AAQuery[0].Contains("give") && plugin.idisable == false)
-            {
-                int.TryParse(AAQuery[2], out itemrole);
-                plugin.Info(itemrole.ToString());
-                if (plugin.itemblacklist.Contains(itemrole) && !plugin.itemblacklistranks.Contains(ARank))
-                {
-                    ev.Handled = true;
-                    ev.Successful = false;
-                }
-            }
-            else if (AAQuery[0].Contains("forceclass") && plugin.rdisable == false)
-            {
-                int.TryParse(AAQuery[2], out itemrole);
-                if (plugin.roleblacklist.Contains(itemrole) && !plugin.roleblacklistranks.Contains(ARank))
-                {
-                    ev.Handled = true;
-                    ev.Successful = false;
-                }
-            }
-        }
+		public void OnAdminQuery(AdminQueryEvent adminquery)
+		{
+			AQuery = adminquery.Query.ToLower();
+			string[] AAQuery = AQuery.Split(' ');
+			ARank = adminquery.Admin.GetRankName();
+			if (AAQuery[0].Contains("give") && plugin.Idisable == false)
+			{
+				int.TryParse(AAQuery[2], out Itemrole);
+				plugin.Info(Itemrole.ToString());
+				if (plugin.Itemblacklist.Contains(Itemrole) && !plugin.Itemblacklistranks.Contains(ARank))
+				{
+					adminquery.Handled = true;
+					adminquery.Successful = false;
+				}
+			}
+			else if (AAQuery[0].Contains("forceclass") && plugin.Rdisable == false)
+			{
+				int.TryParse(AAQuery[2], out Itemrole);
+				if (plugin.Roleblacklist.Contains(Itemrole) && !plugin.Roleblacklistranks.Contains(ARank))
+				{
+					adminquery.Handled = true;
+					adminquery.Successful = false;
+				}
+			}
+		}
 
-        public void OnContain106(PlayerContain106Event ev)
-        {
-            if (plugin.anticamp106 == true)
-            {
-                List<Smod2.API.Door> doors = plugin.Server.Map.GetDoors();
-                doors.First(x => x.Name == "106_PRIMARY").Locked = true;
-                doors.First(x => x.Name == "106_SECONDARY").Locked = true;
-                doors.First(x => x.Name == "106_BOTTOM").Locked = true;
-                doors.First(x => x.Name == "106_PRIMARY").Open = true;
-                doors.First(x => x.Name == "106_SECONDARY").Open = true;
-                doors.First(x => x.Name == "106_BOTTOM").Open = true;
-            }
-        }
+		public void OnContain106(PlayerContain106Event contevent)
+		{
+			if (plugin.Anticamp106 == true)
+			{
+				List<Smod2.API.Door> doors = plugin.Server.Map.GetDoors();
+				try { doors.First(x => x.Name == "106_PRIMARY").Locked = true; } catch { plugin.Warn("UNABLE TO OPEN 106_PRIMARY"); }
+				try { doors.First(x => x.Name == "106_PRIMARY").Open = true; } catch { plugin.Warn("UNABLE TO LOCK 106_PRIMARY"); }
+				try { doors.First(x => x.Name == "106_SECONDARY").Locked = true; } catch { plugin.Warn("UNABLE TO OPEN 106_SECONDARY"); }
+				try { doors.First(x => x.Name == "106_SECONDARY").Open = true; } catch { plugin.Warn("UNABLE TO LOCK 106_SECONDARY"); }
+				try { doors.First(x => x.Name == "106_BOTTOM").Locked = true; } catch { plugin.Warn("UNABLE TO OPEN 106_BOTTOM"); }
+				try { doors.First(x => x.Name == "106_BOTTOM").Open = true; } catch { plugin.Warn("UNABLE TO LOCK 106_BOTTOM"); }
+			}
+		}
 
-        public void OnGeneratorFinish(GeneratorFinishEvent ev)
-        {
-            generatorPowerups++; ;
+		public void OnGeneratorFinish(GeneratorFinishEvent genevent)
+		{
+			GeneratorPowerups++;
 
-            if (generatorPowerups == 5 && plugin.anticamp079 == true)
-            {
-                List<Smod2.API.Door> doors = plugin.Server.Map.GetDoors();
-                doors.First(x => x.Name == "079_FIRST").Locked = true;
-                doors.First(x => x.Name == "079_SECOND").Locked = true;
-                doors.First(x => x.Name == "079_FIRST").Open = true;
-                doors.First(x => x.Name == "079_SECOND").Open = true;
-            }
-        }
+			if (GeneratorPowerups == 5 && plugin.Anticamp079 == true)
+			{
+				List<Smod2.API.Door> doors = plugin.Server.Map.GetDoors();
+				doors.First(x => x.Name == "079_FIRST").Locked = true;
+				doors.First(x => x.Name == "079_FIRST").Open = true;
+				doors.First(x => x.Name == "079_SECOND").Locked = true;
+				doors.First(x => x.Name == "079_SECOND").Open = true;
+			}
+		}
 
-        public void OnStartCountdown(WarheadStartEvent ev)
-        {
-            if (plugin.anticampnuke == true)
-            {
-                List<Smod2.API.Door> doors = plugin.Server.Map.GetDoors();
-                doors.First(x => x.Name == "NUKE_SURFACE").Locked = false;
-                doors.First(x => x.Name == "NUKE_SURFACE").Open = false;
-            }
-        }
+		public void OnStartCountdown(WarheadStartEvent whstart)
+		{
+			if (plugin.Anticampnuke == true)
+			{
+				List<Smod2.API.Door> doors = plugin.Server.Map.GetDoors();
+				doors.First(x => x.Name == "NUKE_SURFACE").Locked = false;
+				doors.First(x => x.Name == "NUKE_SURFACE").Open = false;
 
-        public void OnStopCountdown(WarheadStopEvent ev)
-        {
-            if (plugin.anticampnuke == true)
-            {
-                List<Smod2.API.Door> doors = plugin.Server.Map.GetDoors();
-                doors.First(x => x.Name == "NUKE_SURFACE").Locked = true;
-                doors.First(x => x.Name == "NUKE_SURFACE").Open = true;
-            }
-        }
+			}
+		}
 
-        public void OnWaitingForPlayers(WaitingForPlayersEvent ev)
-        {
-            plugin.RefreshConfig();
-            generatorPowerups = 0;
-        }
+		public void OnStopCountdown(WarheadStopEvent whstop)
+		{
+			if (plugin.Anticampnuke == true)
+			{
+				List<Smod2.API.Door> doors = plugin.Server.Map.GetDoors();
+				doors.First(x => x.Name == "NUKE_SURFACE").Locked = true;
+				doors.First(x => x.Name == "NUKE_SURFACE").Open = true;
+			}
+		}
+
+		public void OnWaitingForPlayers(WaitingForPlayersEvent wfp)
+		{
+			plugin.RefreshConfig();
+			GeneratorPowerups = 0;
+		}
     }
 }
