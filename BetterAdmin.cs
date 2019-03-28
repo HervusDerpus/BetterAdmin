@@ -65,7 +65,7 @@ namespace BetterAdmin
             this.AddConfig(new ConfigSetting("ba_staff_resslot", false, SettingType.BOOL, true, "Automatically creates a reserved slot for studio staff who join the server"));
             this.AddConfig(new ConfigSetting("ba_gmod_resslot", true, SettingType.BOOL, true, "Automatically creates a reserved slot for global moderators who join the server"));
 
-            //this.AddConfig(new ConfigSetting("ba_connectspam_ban", true, SettingType.BOOL, true, "Enable the connection spam ban setting, which bans anyone who tries to connect to a full server"));
+            //this.AddConfig(new ConfigSetting("ba_connectspam_ban", false, SettingType.BOOL, true, "Enable the connection spam ban setting, which bans anyone who tries to connect to a full server"));
             //this.AddConfig(new ConfigSetting("ba_connectspam_ban_length", 1, SettingType.NUMERIC, true, "Length of the ban given upon connecting to a full server"));
 
         }
