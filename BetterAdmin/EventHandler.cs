@@ -16,9 +16,66 @@ namespace BetterAdmin
 		public string AQuery;
 		public int GeneratorPowerups;
 		public int Itemrole;
+		public int Banlength;
 		public bool Wfp;
 
 		public EventHandler(Betteradmin plugin) => this.plugin = plugin;
+
+		public void OnAdminQuery(AdminQueryEvent adminquery)
+		{
+			AQuery = adminquery.Query.ToLower();
+			string[] AAQuery = AQuery.Split(' ');
+			ARank = adminquery.Admin.GetRankName();
+
+			if (AAQuery[0].Contains("give") && plugin.IBlock == true)
+			{
+				int.TryParse(AAQuery[2], out Itemrole);
+				plugin.Info(Itemrole.ToString());
+				if (plugin.Itemblacklist.Contains(Itemrole) && !plugin.Itemblacklistranks.Contains(ARank))
+				{
+					adminquery.Handled = true;
+					adminquery.Successful = false;
+				}
+			}
+			else if (AAQuery[0].Contains("forceclass") && plugin.RBlock == true)
+			{
+				int.TryParse(AAQuery[2], out Itemrole);
+				if (plugin.Roleblacklist.Contains(Itemrole) && !plugin.Roleblacklistranks.Contains(ARank))
+				{
+					adminquery.Handled = true;
+					adminquery.Successful = false;
+				}
+			}
+			else if (AAQuery[0].Contains("grenade") && plugin.Grenadeflash == true && !plugin.Grenadeflashranks.Contains(ARank))
+			{
+				adminquery.Handled = true;
+				adminquery.Successful = false;
+			}
+			else if (AAQuery[0].Contains("flash") && plugin.Grenadeflash == true && !plugin.Grenadeflashranks.Contains(ARank))
+			{
+				adminquery.Handled = true;
+				adminquery.Successful = false;
+			}
+			else if (AAQuery[0].Contains("ban"))
+			{
+				int.TryParse(AAQuery[2], out Banlength);
+				if (Banlength > 10080 && plugin.Sevendays.Contains(ARank))
+				{
+					adminquery.Handled = true;
+					adminquery.Successful = false;
+				}
+				if (Banlength > 20160 && plugin.Fourteendays.Contains(ARank))
+				{
+					adminquery.Handled = true;
+					adminquery.Successful = false;
+				}
+				if (Banlength > 43200 && plugin.Thirtydays.Contains(ARank))
+				{
+					adminquery.Handled = true;
+					adminquery.Successful = false;
+				}
+			}
+		}
 
 		public void OnPlayerJoin(PlayerJoinEvent player)
 		{
@@ -39,57 +96,6 @@ namespace BetterAdmin
 				player.Player.PersonalBroadcast(5, "You joined late, so was spawned as a D-class", false);
 			}
 		}
-
-		public void OnAdminQuery(AdminQueryEvent adminquery)
-		{
-			AQuery = adminquery.Query.ToLower();
-			string[] AAQuery = AQuery.Split(' ');
-			ARank = adminquery.Admin.GetRankName();
-			if (AAQuery[0].Contains("give") && plugin.Idisable == false)
-			{
-				int.TryParse(AAQuery[2], out Itemrole);
-				plugin.Info(Itemrole.ToString());
-				if (plugin.Itemblacklist.Contains(Itemrole) && !plugin.Itemblacklistranks.Contains(ARank))
-				{
-					adminquery.Handled = true;
-					adminquery.Successful = false;
-				}
-			}
-			else if (AAQuery[0].Contains("forceclass") && plugin.Rdisable == false)
-			{
-				int.TryParse(AAQuery[2], out Itemrole);
-				if (plugin.Roleblacklist.Contains(Itemrole) && !plugin.Roleblacklistranks.Contains(ARank))
-				{
-					adminquery.Handled = true;
-					adminquery.Successful = false;
-				}
-			}
-			else if (AAQuery[0].Contains("grenade") && plugin.Grenadeflash == false && !plugin.Grenadeflashranks.Contains(ARank))
-			{
-				adminquery.Handled = true;
-				adminquery.Successful = false;
-			}
-			else if (AAQuery[0].Contains("flash") && plugin.Grenadeflash == false && !plugin.Grenadeflashranks.Contains(ARank))
-			{
-				adminquery.Handled = true;
-				adminquery.Successful = false;
-			}
-			else if (AAQuery[0].Contains("ban"))
-			{
-				if (plugin.Sevendays.Contains(ARank))
-				{
-					adminquery.Handled = true;
-					adminquery.Successful = false;
-					adminquery.Output = "You are not permitted to ban for longer than 7 days!";
-				}
-				else
-				{
-					adminquery.Handled = true;
-					adminquery.Successful = true;
-				}
-			}
-		}
-
 		public void OnContain106(PlayerContain106Event contevent)
 		{
 			if (plugin.Anticamp106 == true)
