@@ -7,7 +7,8 @@ using System.Linq;
 
 namespace BetterAdmin
 {
-	class EventHandler : IEventHandlerAdminQuery, IEventHandlerWarheadStopCountdown, IEventHandlerWarheadStartCountdown, IEventHandlerContain106, IEventHandlerGeneratorFinish, IEventHandlerWaitingForPlayers, IEventHandlerPlayerJoin
+	class EventHandler : IEventHandlerAdminQuery, IEventHandlerWarheadStopCountdown, IEventHandlerWarheadStartCountdown, IEventHandlerContain106, IEventHandlerGeneratorFinish, IEventHandlerWaitingForPlayers, IEventHandlerPlayerJoin,
+		IEventHandlerRoundStart
 	{
 		private readonly Betteradmin plugin;
 
@@ -15,8 +16,9 @@ namespace BetterAdmin
 		public string AQuery;
 		public int GeneratorPowerups;
 		public int Itemrole;
+		public bool Wfp;
 
-		public EventHandler(Betteradmin plugin) => this.plugin = plugin; 
+		public EventHandler(Betteradmin plugin) => this.plugin = plugin;
 
 		public void OnPlayerJoin(PlayerJoinEvent player)
 		{
@@ -31,9 +33,10 @@ namespace BetterAdmin
 				new ReservedSlot(player.Player.IpAddress, player.Player.SteamId, " Studio Staff - " + player.Player.Name).AppendToFile();
 			}
 
-			if(plugin.Latejoin == true && plugin.Server.Round.Duration >= 30)
+			if (plugin.Latejoin == true && plugin.Server.Round.Duration > 0 && plugin.Server.Round.Duration < plugin.Latejoinduration)
 			{
-				player.Player.ChangeRole(Role.CLASSD, true, true, false, false);
+				player.Player.ChangeRole(Role.CLASSD);
+				player.Player.PersonalBroadcast(5, "You joined late, so was spawned as a D-class", false);
 			}
 		}
 
@@ -61,6 +64,30 @@ namespace BetterAdmin
 					adminquery.Successful = false;
 				}
 			}
+			else if (AAQuery[0].Contains("grenade") && plugin.Grenadeflash == false && !plugin.Grenadeflashranks.Contains(ARank))
+			{
+				adminquery.Handled = true;
+				adminquery.Successful = false;
+			}
+			else if (AAQuery[0].Contains("flash") && plugin.Grenadeflash == false && !plugin.Grenadeflashranks.Contains(ARank))
+			{
+				adminquery.Handled = true;
+				adminquery.Successful = false;
+			}
+			else if (AAQuery[0].Contains("ban"))
+			{
+				if (plugin.Sevendays.Contains(ARank))
+				{
+					adminquery.Handled = true;
+					adminquery.Successful = false;
+					adminquery.Output = "You are not permitted to ban for longer than 7 days!";
+				}
+				else
+				{
+					adminquery.Handled = true;
+					adminquery.Successful = true;
+				}
+			}
 		}
 
 		public void OnContain106(PlayerContain106Event contevent)
@@ -76,11 +103,9 @@ namespace BetterAdmin
 				try { doors.First(x => x.Name == "106_BOTTOM").Open = true; } catch { plugin.Warn("UNABLE TO LOCK 106_BOTTOM"); }
 			}
 		}
-
 		public void OnGeneratorFinish(GeneratorFinishEvent genevent)
 		{
 			GeneratorPowerups++;
-
 			if (GeneratorPowerups == 5 && plugin.Anticamp079 == true)
 			{
 				List<Smod2.API.Door> doors = plugin.Server.Map.GetDoors();
@@ -90,7 +115,6 @@ namespace BetterAdmin
 				doors.First(x => x.Name == "079_SECOND").Open = true;
 			}
 		}
-
 		public void OnStartCountdown(WarheadStartEvent whstart)
 		{
 			if (plugin.Anticampnuke == true)
@@ -101,7 +125,6 @@ namespace BetterAdmin
 
 			}
 		}
-
 		public void OnStopCountdown(WarheadStopEvent whstop)
 		{
 			if (plugin.Anticampnuke == true)
@@ -111,11 +134,15 @@ namespace BetterAdmin
 				doors.First(x => x.Name == "NUKE_SURFACE").Open = true;
 			}
 		}
-
 		public void OnWaitingForPlayers(WaitingForPlayersEvent wfp)
 		{
+			Wfp = true;
 			plugin.RefreshConfig();
 			GeneratorPowerups = 0;
 		}
-    }
+		public void OnRoundStart(RoundStartEvent ev)
+		{
+			Wfp = false;
+		}
+	}
 }
