@@ -95,7 +95,7 @@ namespace BetterAdmin
 
 			//Latejoin options
 			this.AddConfig(new ConfigSetting("ba_latejoin", true, true, "Enables the late join feature of BetterAdmin"));
-			this.AddConfig(new ConfigSetting("ba_latejoin_duration", 30, true, "List of ranks that can use the grenade and flash commands"));
+			this.AddConfig(new ConfigSetting("ba_latejoin_duration", 30, true, "Time before people will stop being spawned in after joining late"));
 
 			//Ban length blocker
 			this.AddConfig(new ConfigSetting("ba_7d_ranks", new[] { "" }, true, "List of ranks that should not be allowed to ban for more than 7 days"));
