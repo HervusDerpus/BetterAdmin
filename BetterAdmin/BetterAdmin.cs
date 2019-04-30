@@ -3,8 +3,6 @@ using Smod2.API;
 using Smod2.Attributes;
 using Smod2.Commands;
 using Smod2.Config;
-using Smod2.EventHandlers;
-using Smod2.Events;
 using System.Linq;
 
 namespace BetterAdmin
@@ -14,7 +12,7 @@ namespace BetterAdmin
 		name = "BetterAdmin",
 		description = "Plugin to help with server administration",
 		id = "phoenix.betteradmin",
-		version = "1.2.0",
+		version = "1.2.2",
 		SmodMajor = 3,
 		SmodMinor = 4,
 		SmodRevision = 0
