@@ -76,6 +76,9 @@ namespace BetterAdmin
 		public readonly bool Bypass = true;
 		public readonly string[] BypassRanks = { "owner", "admin" };
 
+		public readonly bool Lockdown = true;
+		public readonly string[] LockdownRanks = { "owner", "admin" };
+
 
 
 		public readonly string[] RslotRanks = { "owner", "admin" };
