@@ -20,72 +20,170 @@ namespace BetterAdmin
 			string[] AAQuery = AQuery.Split(' ');
 			string ARank = adminquery.Admin.GetRankName();
 
-			if (AAQuery[0].Contains("give") && plugin.IBlock)
+			switch (AAQuery[0])
 			{
-				int.TryParse(AAQuery[2], out int item);
-				if (plugin.Itemblacklist.Contains(item) && !plugin.Itemblacklistranks.Contains(ARank))
-				{
+				case "give":
+					if (plugin.ItemBlocker)
+					{
+						if (plugin.ItemBlockerItems.Contains(AAQuery[2]) && !plugin.ItemBlockerRanks.Contains(ARank))
+						{
+							adminquery.Handled = true;
+							adminquery.Successful = false;
+						}
+					}
+					break;
+
+				case "fc":
+				case "forceclass":
+					if (plugin.RoleBlocker)
+					{
+						if (plugin.RoleBlockerRoles.Contains(AAQuery[2]) && !plugin.RoleBlockerRanks.Contains(ARank))
+						{
+							adminquery.Handled = true;
+							adminquery.Successful = false;
+						}
+					}
+					break;
+
+				case "flash":
+				case "grenade":
+					if(plugin.GrenadeFlash && !plugin.GrenadeFlashRanks.Contains(ARank))
+					{
+						adminquery.Handled = true;
+						adminquery.Successful = false;
+					}
+					break;
+
+				case "ban":
+					int.TryParse(AAQuery[2], out int Banlength);
+					if (Banlength > 10080 && plugin.SevenDaysRanks.Contains(ARank))
+					{
+						adminquery.Handled = true;
+						adminquery.Successful = false;
+					}
+					if (Banlength > 20160 && plugin.FourteenDaysRanks.Contains(ARank))
+					{
+						adminquery.Handled = true;
+						adminquery.Successful = false;
+					}
+					if (Banlength > 43200 && plugin.ThirtyDaysRanks.Contains(ARank))
+					{
+						adminquery.Handled = true;
+						adminquery.Successful = false;
+					}
+					break;
+
+				//Facility Management Permissions
+				case "broadcast":
+				case "bc":
+				case "alert":
+				case "broadcastmono":
+				case "bcmono":
+				case "alertmono":
+				case "CLEARBC":
+				case "BCCLEAR":
+				case "CLEARALERT":
+				case "ALERTCLEAR":
+					if (plugin.Broadcast && !plugin.BroadcastRanks.Contains(ARank) || (plugin.FacilityOverride.Contains (ARank) || plugin.OverrideRanks.Contains(ARank)))
+					{
+						adminquery.Handled = true;
+						adminquery.Successful = false;
+					}
+					break;
+
+				case "mute":
+				case "unmute":
+					if(plugin.DisableMuting || (plugin.Mute && !plugin.MuteRanks.Contains(ARank) || (plugin.FacilityOverride.Contains(ARank) || plugin.OverrideRanks.Contains(ARank))))
+					{
+						adminquery.Handled = true;
+						adminquery.Successful = false;
+					}
+					break;
+
+				case "imute":
+				case "iunmute":
+					if (plugin.Imute && !plugin.ImuteRanks.Contains(ARank) || (plugin.FacilityOverride.Contains(ARank) || plugin.OverrideRanks.Contains(ARank)))
+					{
+						adminquery.Handled = true;
+						adminquery.Successful = false;
+					}
+					break;
+
+				case "o":
+				case "open":
+				case "c":
+				case "close":
+					if (plugin.Doors && !plugin.OpenCloseRanks.Contains(ARank) || (plugin.FacilityOverride.Contains(ARank) || plugin.OverrideRanks.Contains(ARank)))
+					{
+						adminquery.Handled = true;
+						adminquery.Successful = false;
+					}
+					break;
+
+				case "l":
+				case "lock":
+				case "ul":
+				case "unlock":
+					if (plugin.Doors && !plugin.LockUnlockRanks.Contains(ARank) || (plugin.FacilityOverride.Contains(ARank) || plugin.OverrideRanks.Contains(ARank)))
+					{
+						adminquery.Handled = true;
+						adminquery.Successful = false;
+					}
+					break;
+
+				case "destroy":
+					if (plugin.Doors && !plugin.DestroyRanks.Contains(ARank) || (plugin.FacilityOverride.Contains(ARank) || plugin.OverrideRanks.Contains(ARank)))
+					{
+						adminquery.Handled = true;
+						adminquery.Successful = false;
+					}
+					break;
+				case "bm":
+				case "bypass":
+					if (plugin.Bypass && !plugin.BypassRanks.Contains(ARank) || (plugin.FacilityOverride.Contains(ARank) || plugin.OverrideRanks.Contains(ARank)))
+					{
+						adminquery.Handled = true;
+						adminquery.Successful = false;
+					}
+					break;
+
+				case "ld":
+				case "lockdown":
+					if (plugin.Lockdown && !plugin.LockdownRanks.Contains(ARank) || (plugin.FacilityOverride.Contains(ARank) || plugin.OverrideRanks.Contains(ARank)))
+					{
+						adminquery.Handled = true;
+						adminquery.Successful = false;
+					}
+					break;
+
+				case "cassie":
+					if (plugin.Cassie && !plugin.CassieRanks.Contains(ARank) || (plugin.FacilityOverride.Contains(ARank) || plugin.OverrideRanks.Contains(ARank)))
+					{
+						adminquery.Handled = true;
+						adminquery.Successful = false;
+					}
+					break;
+
+				default:
 					adminquery.Handled = true;
-					adminquery.Successful = false;
-				}
-			}
-			else if (AAQuery[0].Contains("forceclass") && plugin.RBlock)
-			{
-				int.TryParse(AAQuery[2], out int role);
-				if (plugin.Roleblacklist.Contains(role) && !plugin.Roleblacklistranks.Contains(ARank))
-				{
-					adminquery.Handled = true;
-					adminquery.Successful = false;
-				}
-			}
-			else if (AAQuery[0].Contains("grenade") && plugin.Grenadeflash && !plugin.Grenadeflashranks.Contains(ARank))
-			{
-				adminquery.Handled = true;
-				adminquery.Successful = false;
-			}
-			else if (AAQuery[0].Contains("flash") && plugin.Grenadeflash && !plugin.Grenadeflashranks.Contains(ARank))
-			{
-				adminquery.Handled = true;
-				adminquery.Successful = false;
-			}
-			else if (AAQuery[0].Contains("ban"))
-			{
-				int.TryParse(AAQuery[2], out int Banlength);
-				if (Banlength > 10080 && plugin.Sevendays.Contains(ARank))
-				{
-					adminquery.Handled = true;
-					adminquery.Successful = false;
-				}
-				if (Banlength > 20160 && plugin.Fourteendays.Contains(ARank))
-				{
-					adminquery.Handled = true;
-					adminquery.Successful = false;
-				}
-				if (Banlength > 43200 && plugin.Thirtydays.Contains(ARank))
-				{
-					adminquery.Handled = true;
-					adminquery.Successful = false;
-				}
+					adminquery.Successful = true;
+					break;
 			}
 		}
 
 		public void OnPlayerJoin(PlayerJoinEvent player)
 		{
-			if (plugin.Gmodresslot && player.Player.GetAuthToken().Contains("Bypass bans: YES") && !ReservedSlot.ContainsSteamID(player.Player.SteamId))
+			if (plugin.GmodResSlot && player.Player.GetAuthToken().Contains("Bypass bans: YES") && !ReservedSlot.ContainsSteamID(player.Player.SteamId))
 			{
 				plugin.Info("Added " + player.Player.Name + " to the reserved slots");
 				new ReservedSlot(player.Player.IpAddress, player.Player.SteamId, " Studio Global Security - " + player.Player.Name).AppendToFile();
+				player.Player.SendConsoleMessage("You've been given a reserved slot - Global Security");
 			}
-			else if (plugin.Staffresslot && player.Player.GetAuthToken().Contains("Bypass geo restrictions: YES") && !ReservedSlot.ContainsSteamID(player.Player.SteamId))
+			else if (plugin.StaffResSlot && player.Player.GetAuthToken().Contains("Bypass geo restrictions: YES") && !ReservedSlot.ContainsSteamID(player.Player.SteamId))
 			{
 				plugin.Info("Added " + player.Player.Name + " to the reserved slots");
 				new ReservedSlot(player.Player.IpAddress, player.Player.SteamId, " Studio Staff - " + player.Player.Name).AppendToFile();
-			}
-
-			if (plugin.Latejoin && plugin.Server.Round.Duration > 0 && plugin.Server.Round.Duration < plugin.Latejoinduration)
-			{
-				player.Player.ChangeRole(Role.CLASSD);
-				player.Player.PersonalBroadcast(5, "You joined late, so was spawned as a D-class", false);
+				player.Player.SendConsoleMessage("You've been given a reserved slot - Studio Staff");
 			}
 		}
 		public void OnContain106(PlayerContain106Event contevent)
@@ -135,7 +233,7 @@ namespace BetterAdmin
 		}
 		public void OnStartCountdown(WarheadStartEvent whstart)
 		{
-			if (plugin.Anticampnuke)
+			if (plugin.AnticampNuke)
 			{
 				List<Smod2.API.Door> doors = plugin.Server.Map.GetDoors();
 				Smod2.API.Door surface = doors.First(x => x.Name == "079_FIRST");
@@ -148,7 +246,7 @@ namespace BetterAdmin
 		}
 		public void OnStopCountdown(WarheadStopEvent whstop)
 		{
-			if (plugin.Anticampnuke)
+			if (plugin.AnticampNuke)
 			{
 				List<Smod2.API.Door> doors = plugin.Server.Map.GetDoors();
 				Smod2.API.Door surface = doors.First(x => x.Name == "079_FIRST");
@@ -161,7 +259,6 @@ namespace BetterAdmin
 		}
 		public void OnWaitingForPlayers(WaitingForPlayersEvent wfp)
 		{
-			plugin.RefreshConfig();
 			GeneratorPowerups = 0;
 		}
 	}
