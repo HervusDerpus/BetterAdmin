@@ -25,7 +25,7 @@ namespace BetterAdmin
 				case "give":
 					if (plugin.ItemBlocker)
 					{
-						if (plugin.ItemBlockerItems.Contains(AAQuery[2]) && !plugin.ItemBlockerRanks.Contains(ARank))
+						if (plugin.ItemBlockerItems.Contains(AAQuery[2]) && (!plugin.ItemBlockerRanks.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
 						{
 							adminquery.Handled = true;
 							adminquery.Successful = false;
@@ -37,7 +37,7 @@ namespace BetterAdmin
 				case "forceclass":
 					if (plugin.RoleBlocker)
 					{
-						if (plugin.RoleBlockerRoles.Contains(AAQuery[2]) && !plugin.RoleBlockerRanks.Contains(ARank))
+						if (plugin.RoleBlockerRoles.Contains(AAQuery[2]) && (!plugin.RoleBlockerRanks.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
 						{
 							adminquery.Handled = true;
 							adminquery.Successful = false;
@@ -47,7 +47,7 @@ namespace BetterAdmin
 
 				case "flash":
 				case "grenade":
-					if(plugin.GrenadeFlash && !plugin.GrenadeFlashRanks.Contains(ARank))
+					if(plugin.GrenadeFlash && (!plugin.GrenadeFlashRanks.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
 					{
 						adminquery.Handled = true;
 						adminquery.Successful = false;
@@ -56,17 +56,17 @@ namespace BetterAdmin
 
 				case "ban":
 					int.TryParse(AAQuery[2], out int Banlength);
-					if (Banlength > 10080 && plugin.SevenDaysRanks.Contains(ARank))
+					if (Banlength > 10080 && (plugin.SevenDaysRanks.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
 					{
 						adminquery.Handled = true;
 						adminquery.Successful = false;
 					}
-					if (Banlength > 20160 && plugin.FourteenDaysRanks.Contains(ARank))
+					if (Banlength > 20160 && (plugin.FourteenDaysRanks.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
 					{
 						adminquery.Handled = true;
 						adminquery.Successful = false;
 					}
-					if (Banlength > 43200 && plugin.ThirtyDaysRanks.Contains(ARank))
+					if (Banlength > 43200 && (plugin.ThirtyDaysRanks.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
 					{
 						adminquery.Handled = true;
 						adminquery.Successful = false;
@@ -84,7 +84,7 @@ namespace BetterAdmin
 				case "BCCLEAR":
 				case "CLEARALERT":
 				case "ALERTCLEAR":
-					if (plugin.Broadcast && !plugin.BroadcastRanks.Contains(ARank) || (plugin.FacilityOverride.Contains (ARank) || plugin.OverrideRanks.Contains(ARank)))
+					if (plugin.broadcast && (!plugin.BroadcastRanks.Contains(ARank) && !plugin.FacilityOverride.Contains (ARank) && !plugin.OverrideRanks.Contains(ARank)))
 					{
 						adminquery.Handled = true;
 						adminquery.Successful = false;
@@ -93,7 +93,7 @@ namespace BetterAdmin
 
 				case "mute":
 				case "unmute":
-					if(plugin.DisableMuting || (plugin.Mute && !plugin.MuteRanks.Contains(ARank) || (plugin.FacilityOverride.Contains(ARank) || plugin.OverrideRanks.Contains(ARank))))
+					if(plugin.DisableMuting || (plugin.Mute && !plugin.MuteRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
 					{
 						adminquery.Handled = true;
 						adminquery.Successful = false;
@@ -102,7 +102,7 @@ namespace BetterAdmin
 
 				case "imute":
 				case "iunmute":
-					if (plugin.Imute && !plugin.ImuteRanks.Contains(ARank) || (plugin.FacilityOverride.Contains(ARank) || plugin.OverrideRanks.Contains(ARank)))
+					if (plugin.Imute && (!plugin.ImuteRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
 					{
 						adminquery.Handled = true;
 						adminquery.Successful = false;
@@ -113,7 +113,7 @@ namespace BetterAdmin
 				case "open":
 				case "c":
 				case "close":
-					if (plugin.Doors && !plugin.OpenCloseRanks.Contains(ARank) || (plugin.FacilityOverride.Contains(ARank) || plugin.OverrideRanks.Contains(ARank)))
+					if (plugin.Doors && (!plugin.OpenCloseRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
 					{
 						adminquery.Handled = true;
 						adminquery.Successful = false;
@@ -124,7 +124,7 @@ namespace BetterAdmin
 				case "lock":
 				case "ul":
 				case "unlock":
-					if (plugin.Doors && !plugin.LockUnlockRanks.Contains(ARank) || (plugin.FacilityOverride.Contains(ARank) || plugin.OverrideRanks.Contains(ARank)))
+					if (plugin.Doors && (!plugin.LockUnlockRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
 					{
 						adminquery.Handled = true;
 						adminquery.Successful = false;
@@ -132,7 +132,7 @@ namespace BetterAdmin
 					break;
 
 				case "destroy":
-					if (plugin.Doors && !plugin.DestroyRanks.Contains(ARank) || (plugin.FacilityOverride.Contains(ARank) || plugin.OverrideRanks.Contains(ARank)))
+					if (plugin.Doors && (!plugin.DestroyRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
 					{
 						adminquery.Handled = true;
 						adminquery.Successful = false;
@@ -140,7 +140,7 @@ namespace BetterAdmin
 					break;
 				case "bm":
 				case "bypass":
-					if (plugin.Bypass && !plugin.BypassRanks.Contains(ARank) || (plugin.FacilityOverride.Contains(ARank) || plugin.OverrideRanks.Contains(ARank)))
+					if (plugin.Bypass && (!plugin.BypassRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
 					{
 						adminquery.Handled = true;
 						adminquery.Successful = false;
@@ -149,7 +149,7 @@ namespace BetterAdmin
 
 				case "ld":
 				case "lockdown":
-					if (plugin.Lockdown && !plugin.LockdownRanks.Contains(ARank) || (plugin.FacilityOverride.Contains(ARank) || plugin.OverrideRanks.Contains(ARank)))
+					if (plugin.Lockdown && (!plugin.LockdownRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
 					{
 						adminquery.Handled = true;
 						adminquery.Successful = false;
@@ -157,7 +157,7 @@ namespace BetterAdmin
 					break;
 
 				case "cassie":
-					if (plugin.Cassie && !plugin.CassieRanks.Contains(ARank) || (plugin.FacilityOverride.Contains(ARank) || plugin.OverrideRanks.Contains(ARank)))
+					if (plugin.Cassie && (!plugin.CassieRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
 					{
 						adminquery.Handled = true;
 						adminquery.Successful = false;
@@ -165,8 +165,6 @@ namespace BetterAdmin
 					break;
 
 				default:
-					adminquery.Handled = true;
-					adminquery.Successful = true;
 					break;
 			}
 		}
