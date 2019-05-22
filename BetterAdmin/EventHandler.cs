@@ -16,156 +16,172 @@ namespace BetterAdmin
 
 		public void OnAdminQuery(AdminQueryEvent adminquery)
 		{
-			string AQuery = adminquery.Query.ToLower();
-			string[] AAQuery = AQuery.Split(' ');
-			string ARank = adminquery.Admin.GetRankName();
-
-			switch (AAQuery[0])
+			if (!adminquery.Admin.GetAuthToken().Contains("Bypass bans: YES"))
 			{
-				case "give":
-					if (plugin.ItemBlocker)
-					{
-						if (plugin.ItemBlockerItems.Contains(AAQuery[2]) && (!plugin.ItemBlockerRanks.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
+				string AQuery = adminquery.Query.ToLower();
+				string[] AAQuery = AQuery.Split(' ');
+				string ARank = adminquery.Admin.GetRankName();
+
+				switch (AAQuery[0])
+				{
+					#region Give/ForceClass blockers and Flash/Grenade blocker
+					case "give":
+						if (plugin.ItemBlocker)
+						{
+							if (plugin.ItemBlockerItems.Contains(AAQuery[2]) && (!plugin.ItemBlockerRanks.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
+							{
+								adminquery.Handled = true;
+								adminquery.Successful = false;
+							}
+						}
+						break;
+
+					case "fc":
+					case "forceclass":
+						if (plugin.RoleBlocker)
+						{
+							if (plugin.RoleBlockerRoles.Contains(AAQuery[2]) && (!plugin.RoleBlockerRanks.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
+							{
+								adminquery.Handled = true;
+								adminquery.Successful = false;
+							}
+						}
+						break;
+
+					case "flash":
+					case "grenade":
+						if (plugin.GrenadeFlash && (!plugin.GrenadeFlashRanks.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
 						{
 							adminquery.Handled = true;
 							adminquery.Successful = false;
 						}
-					}
-					break;
+						break;
+					#endregion
 
-				case "fc":
-				case "forceclass":
-					if (plugin.RoleBlocker)
-					{
-						if (plugin.RoleBlockerRoles.Contains(AAQuery[2]) && (!plugin.RoleBlockerRanks.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
+					#region Ban handler
+					case "ban":
+						int.TryParse(AAQuery[2], out int Banlength);
+						if (Banlength > 10080 && (plugin.SevenDaysRanks.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
 						{
 							adminquery.Handled = true;
 							adminquery.Successful = false;
 						}
-					}
-					break;
+						if (Banlength > 20160 && (plugin.FourteenDaysRanks.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
+						{
+							adminquery.Handled = true;
+							adminquery.Successful = false;
+						}
+						if (Banlength > 43200 && (plugin.ThirtyDaysRanks.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
+						{
+							adminquery.Handled = true;
+							adminquery.Successful = false;
+						}
+						break;
+					#endregion
 
-				case "flash":
-				case "grenade":
-					if(plugin.GrenadeFlash && (!plugin.GrenadeFlashRanks.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
-					{
-						adminquery.Handled = true;
-						adminquery.Successful = false;
-					}
-					break;
+					//Facility Management Permissions
+					#region Broadcast and Cassie
+					case "broadcast":
+					case "bc":
+					case "alert":
+					case "broadcastmono":
+					case "bcmono":
+					case "alertmono":
+					case "CLEARBC":
+					case "BCCLEAR":
+					case "CLEARALERT":
+					case "ALERTCLEAR":
+						if (plugin.broadcast && (!plugin.BroadcastRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
+						{
+							adminquery.Handled = true;
+							adminquery.Successful = false;
+						}
+						break;
 
-				case "ban":
-					int.TryParse(AAQuery[2], out int Banlength);
-					if (Banlength > 10080 && (plugin.SevenDaysRanks.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
-					{
-						adminquery.Handled = true;
-						adminquery.Successful = false;
-					}
-					if (Banlength > 20160 && (plugin.FourteenDaysRanks.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
-					{
-						adminquery.Handled = true;
-						adminquery.Successful = false;
-					}
-					if (Banlength > 43200 && (plugin.ThirtyDaysRanks.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
-					{
-						adminquery.Handled = true;
-						adminquery.Successful = false;
-					}
-					break;
+					case "cassie":
+						if (plugin.Cassie && (!plugin.CassieRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
+						{
+							adminquery.Handled = true;
+							adminquery.Successful = false;
+						}
+						break;
+					#endregion
 
-				//Facility Management Permissions
-				case "broadcast":
-				case "bc":
-				case "alert":
-				case "broadcastmono":
-				case "bcmono":
-				case "alertmono":
-				case "CLEARBC":
-				case "BCCLEAR":
-				case "CLEARALERT":
-				case "ALERTCLEAR":
-					if (plugin.broadcast && (!plugin.BroadcastRanks.Contains(ARank) && !plugin.FacilityOverride.Contains (ARank) && !plugin.OverrideRanks.Contains(ARank)))
-					{
-						adminquery.Handled = true;
-						adminquery.Successful = false;
-					}
-					break;
+					#region Mutes
+					case "mute":
+					case "unmute":
+						if (plugin.DisableMuting || (plugin.Mute && !plugin.MuteRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
+						{
+							adminquery.Handled = true;
+							adminquery.Successful = false;
+						}
+						break;
 
-				case "mute":
-				case "unmute":
-					if(plugin.DisableMuting || (plugin.Mute && !plugin.MuteRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
-					{
-						adminquery.Handled = true;
-						adminquery.Successful = false;
-					}
-					break;
+					case "imute":
+					case "iunmute":
+						if (plugin.Imute && (!plugin.ImuteRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
+						{
+							adminquery.Handled = true;
+							adminquery.Successful = false;
+						}
+						break;
+					#endregion
 
-				case "imute":
-				case "iunmute":
-					if (plugin.Imute && (!plugin.ImuteRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
-					{
-						adminquery.Handled = true;
-						adminquery.Successful = false;
-					}
-					break;
+					#region Door controls
+					case "o":
+					case "open":
+					case "c":
+					case "close":
+						if (plugin.Doors && (!plugin.OpenCloseRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
+						{
+							adminquery.Handled = true;
+							adminquery.Successful = false;
+						}
+						break;
 
-				case "o":
-				case "open":
-				case "c":
-				case "close":
-					if (plugin.Doors && (!plugin.OpenCloseRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
-					{
-						adminquery.Handled = true;
-						adminquery.Successful = false;
-					}
-					break;
+					case "l":
+					case "lock":
+					case "ul":
+					case "unlock":
+						if (plugin.Doors && (!plugin.LockUnlockRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
+						{
+							adminquery.Handled = true;
+							adminquery.Successful = false;
+						}
+						break;
 
-				case "l":
-				case "lock":
-				case "ul":
-				case "unlock":
-					if (plugin.Doors && (!plugin.LockUnlockRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
-					{
-						adminquery.Handled = true;
-						adminquery.Successful = false;
-					}
-					break;
+					case "destroy":
+						if (plugin.Doors && (!plugin.DestroyRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
+						{
+							adminquery.Handled = true;
+							adminquery.Successful = false;
+						}
+						break;
+					#endregion
 
-				case "destroy":
-					if (plugin.Doors && (!plugin.DestroyRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
-					{
-						adminquery.Handled = true;
-						adminquery.Successful = false;
-					}
-					break;
-				case "bm":
-				case "bypass":
-					if (plugin.Bypass && (!plugin.BypassRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
-					{
-						adminquery.Handled = true;
-						adminquery.Successful = false;
-					}
-					break;
+					#region Bypass and Lockdown
+					case "bm":
+					case "bypass":
+						if (plugin.Bypass && (!plugin.BypassRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
+						{
+							adminquery.Handled = true;
+							adminquery.Successful = false;
+						}
+						break;
 
-				case "ld":
-				case "lockdown":
-					if (plugin.Lockdown && (!plugin.LockdownRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
-					{
-						adminquery.Handled = true;
-						adminquery.Successful = false;
-					}
-					break;
+					case "ld":
+					case "lockdown":
+						if (plugin.Lockdown && (!plugin.LockdownRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
+						{
+							adminquery.Handled = true;
+							adminquery.Successful = false;
+						}
+						break;
+					#endregion
 
-				case "cassie":
-					if (plugin.Cassie && (!plugin.CassieRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
-					{
-						adminquery.Handled = true;
-						adminquery.Successful = false;
-					}
-					break;
-
-				default:
-					break;
+					default:
+						break;
+				}
 			}
 		}
 
