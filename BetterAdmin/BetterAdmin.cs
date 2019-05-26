@@ -101,9 +101,6 @@ namespace BetterAdmin
 
 			//Reserved slot command
 			this.AddCommand("rslot", new RedSlotCommandHandler(this));
-
-			//Misc.
-			this.AddConfig(new ConfigSetting("ba_resslot_ranks", new[] { "admin", "owner" }, true, "List of ranks that should be able to use the RSLOT command"));
 		}
 	}
 
