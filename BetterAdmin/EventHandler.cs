@@ -108,7 +108,11 @@ namespace BetterAdmin
 					#region Mutes
 					case "mute":
 					case "unmute":
-						if (plugin.DisableMuting || (plugin.Mute && !plugin.MuteRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
+						if (plugin.DisableMuting)
+						{
+							DisabledMuting(adminquery);
+						}
+						else if (plugin.Mute && !plugin.MuteRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank))
 						{
 							FailedAdminQuery(adminquery, AAQuery[0]);
 						}
@@ -275,7 +279,12 @@ namespace BetterAdmin
 			GeneratorPowerups = 0;
 		}
 
-
+		void DisabledMuting(AdminQueryEvent adminquery)
+		{
+			adminquery.Handled = true;
+			adminquery.Successful = false;
+			adminquery.Admin.PersonalBroadcast(3, $"<color=#ff0000ff>Muting has been disabled on this server!</color>", false);
+		}
 		void FailedGive(AdminQueryEvent adminquery, string item)
 		{
 			adminquery.Handled = true;
