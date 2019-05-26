@@ -20,6 +20,9 @@ namespace BetterAdmin
 		)]
 	class Betteradmin : Plugin
 	{
+		//Master whitelist
+		[ConfigOption] public readonly string[] OverrideRanks = { "owner" };
+
 		//Automatic-stuffs
 		[ConfigOption] public readonly bool StaffResSlot = false;
 		[ConfigOption] public readonly bool GmodResSlot = true;
@@ -29,19 +32,19 @@ namespace BetterAdmin
 
 		//Smod command blockers
 		[ConfigOption] public readonly bool GrenadeFlash = true;
-		[ConfigOption] public readonly string[] GrenadeFlashRanks = { "owner" };
+		[ConfigOption] public readonly string[] GrenadeFlashRanks = { "admin" };
 
 		//Item and Role Blockers
 		[ConfigOption] public readonly bool ItemBlocker = true;
 		[ConfigOption] public readonly string[] ItemBlockerItems = { "25" };
-		[ConfigOption] public readonly string[] ItemBlockerRanks = { "owner" };
+		[ConfigOption] public readonly string[] ItemBlockerRanks = { };
 
 		[ConfigOption] public readonly bool RoleBlocker = true;
 		[ConfigOption] public readonly string[] RoleBlockerRoles = { "14" };
-		[ConfigOption] public readonly string[] RoleBlockerRanks = { "owner" };
+		[ConfigOption] public readonly string[] RoleBlockerRanks = { "admin" };
 
 		//Ban length blockers
-		[ConfigOption] public readonly bool SevenDays = true;
+		[ConfigOption] public readonly bool SevenDays = false;
 		[ConfigOption] public readonly string[] SevenDaysRanks = { };
 
 		[ConfigOption] public readonly bool FourteenDays = true;
@@ -58,27 +61,28 @@ namespace BetterAdmin
 		[ConfigOption] public readonly string[] MuteRanks = { };
 
 		[ConfigOption] public readonly bool Imute = false;
-		[ConfigOption] public readonly string[] ImuteRanks = { "admin", "owner" };
+		[ConfigOption] public readonly string[] ImuteRanks = { "admin" };
 
 		[ConfigOption] public readonly bool Cassie = false;
-		[ConfigOption] public readonly string[] CassieRanks = { "owner" };
+		[ConfigOption] public readonly string[] CassieRanks = { };
 
-		[ConfigOption] public readonly bool broadcast = false;
-		[ConfigOption] public readonly string[] BroadcastRanks = { "admin", "owner" };
+		[ConfigOption] public readonly bool Broadcast = false;
+		[ConfigOption] public readonly string[] BroadcastRanks = { "admin" };
 
 		[ConfigOption] public readonly bool Doors = false;
-		[ConfigOption] public readonly string[] OpenCloseRanks = { "moderator", "admin", "owner" };
-		[ConfigOption] public readonly string[] LockUnlockRanks = { "admin", "owner" };
-		[ConfigOption] public readonly string[] DestroyRanks = { "owner" };
+		[ConfigOption] public readonly string[] OpenCloseRanks = { "admin", "moderator" };
+		[ConfigOption] public readonly string[] LockUnlockRanks = { "admin", };
+		[ConfigOption] public readonly string[] DestroyRanks = { };
 
 		[ConfigOption] public readonly bool Bypass = true;
-		[ConfigOption] public readonly string[] BypassRanks = { "owner", "admin" };
+		[ConfigOption] public readonly string[] BypassRanks = { "admin", };
 
 		[ConfigOption] public readonly bool Lockdown = true;
-		[ConfigOption] public readonly string[] LockdownRanks = { "owner", "admin" };
+		[ConfigOption] public readonly string[] LockdownRanks = { "admin" };
+		[ConfigOption] public readonly bool Heal = true;
+		[ConfigOption] public readonly string[] HealRanks = { "admin" };
 
-		[ConfigOption] public readonly string[] RslotRanks = { "owner", "admin" };
-		[ConfigOption] public readonly string[] OverrideRanks = { "owner" };
+		[ConfigOption] public readonly string[] RslotRanks = { "admin" };
 
 		public override void OnDisable()
 		{

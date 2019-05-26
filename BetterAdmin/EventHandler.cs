@@ -16,173 +16,172 @@ namespace BetterAdmin
 
 		public void OnAdminQuery(AdminQueryEvent adminquery)
 		{
-			if (!adminquery.Admin.GetAuthToken().Contains("Bypass bans: YES"))
+			//if (!adminquery.Admin.GetAuthToken().Contains("Bypass bans: YES"))
+			//{
+			string AQuery = adminquery.Query.ToLower();
+			string[] AAQuery = AQuery.Split(' ');
+			string ARank = adminquery.Admin.GetRankName();
+
+			switch (AAQuery[0])
 			{
-				string AQuery = adminquery.Query.ToLower();
-				string[] AAQuery = AQuery.Split(' ');
-				string ARank = adminquery.Admin.GetRankName();
+				#region Give/ForceClass blockers and Flash/Grenade blocker
+				case "give":
+					if (plugin.ItemBlocker)
+					{
+						if (plugin.ItemBlockerItems.Contains(AAQuery[2]) && (!plugin.ItemBlockerRanks.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
+						{
+							FailedGive(adminquery, AAQuery[2]);
+						}
+					}
+					break;
 
-				switch (AAQuery[0])
-				{
-					#region Give/ForceClass blockers and Flash/Grenade blocker
-					case "give":
-						if (plugin.ItemBlocker)
+				case "fc":
+				case "forceclass":
+					if (plugin.RoleBlocker)
+					{
+						if (plugin.RoleBlockerRoles.Contains(AAQuery[2]) && (!plugin.RoleBlockerRanks.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
 						{
-							if (plugin.ItemBlockerItems.Contains(AAQuery[2]) && (!plugin.ItemBlockerRanks.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
-							{
-								adminquery.Handled = true;
-								adminquery.Successful = false;
-							}
+							FailedForceClass(adminquery, AAQuery[2]);
 						}
-						break;
+					}
+					break;
 
-					case "fc":
-					case "forceclass":
-						if (plugin.RoleBlocker)
-						{
-							if (plugin.RoleBlockerRoles.Contains(AAQuery[2]) && (!plugin.RoleBlockerRanks.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
-							{
-								adminquery.Handled = true;
-								adminquery.Successful = false;
-							}
-						}
-						break;
+				case "flash":
+				case "grenade":
+					if (plugin.GrenadeFlash && (!plugin.GrenadeFlashRanks.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
+					{
+						FailedAdminQuery(adminquery, AAQuery[0]);
+					}
+					break;
+				#endregion
 
-					case "flash":
-					case "grenade":
-						if (plugin.GrenadeFlash && (!plugin.GrenadeFlashRanks.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
-						{
-							adminquery.Handled = true;
-							adminquery.Successful = false;
-						}
-						break;
-					#endregion
+				#region Ban handler
+				case "ban":
+					int.TryParse(AAQuery[2], out int Banlength);
+					if (Banlength > 10079 && Banlength < 20160 && plugin.SevenDaysRanks.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank))
+					{
+						adminquery.Handled = true;
+						adminquery.Successful = false;
+						adminquery.Admin.PersonalBroadcast(3, "<color=#ff0000ff>You are not permitted to ban for longer than 7 days!</color>", false);
+					}
+					if (Banlength > 20159 && Banlength < 43200 && plugin.FourteenDaysRanks.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank))
+					{
+						adminquery.Handled = true;
+						adminquery.Successful = false;
+						adminquery.Admin.PersonalBroadcast(3, "<color=#ff0000ff>You are not permitted to ban for longer than 14 days!</color>", false);
+					}
+					if (Banlength > 43199 && plugin.ThirtyDaysRanks.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank))
+					{
+						adminquery.Handled = true;
+						adminquery.Successful = false;
+						adminquery.Admin.PersonalBroadcast(3, "<color=#ff0000ff>You are not permitted to ban for longer than 30 days!</color>", false);
+					}
+					break;
+				#endregion
 
-					#region Ban handler
-					case "ban":
-						int.TryParse(AAQuery[2], out int Banlength);
-						if (Banlength > 10080 && (plugin.SevenDaysRanks.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
-						{
-							adminquery.Handled = true;
-							adminquery.Successful = false;
-						}
-						if (Banlength > 20160 && (plugin.FourteenDaysRanks.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
-						{
-							adminquery.Handled = true;
-							adminquery.Successful = false;
-						}
-						if (Banlength > 43200 && (plugin.ThirtyDaysRanks.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
-						{
-							adminquery.Handled = true;
-							adminquery.Successful = false;
-						}
-						break;
-					#endregion
+				//Facility Management Permissions
+				#region Broadcast and Cassie
+				case "broadcast":
+				case "bc":
+				case "alert":
+				case "broadcastmono":
+				case "bcmono":
+				case "alertmono":
+				case "CLEARBC":
+				case "BCCLEAR":
+				case "CLEARALERT":
+				case "ALERTCLEAR":
+					if (plugin.Broadcast && !plugin.BroadcastRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank))
+					{
+						FailedAdminQuery(adminquery, AAQuery[0]);
+					}
+					break;
 
-					//Facility Management Permissions
-					#region Broadcast and Cassie
-					case "broadcast":
-					case "bc":
-					case "alert":
-					case "broadcastmono":
-					case "bcmono":
-					case "alertmono":
-					case "CLEARBC":
-					case "BCCLEAR":
-					case "CLEARALERT":
-					case "ALERTCLEAR":
-						if (plugin.broadcast && (!plugin.BroadcastRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
-						{
-							adminquery.Handled = true;
-							adminquery.Successful = false;
-						}
-						break;
+				case "cassie":
+					if (plugin.Cassie && !plugin.CassieRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank))
+					{
+						FailedAdminQuery(adminquery, AAQuery[0]);
+					}
+					break;
+				#endregion
 
-					case "cassie":
-						if (plugin.Cassie && (!plugin.CassieRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
-						{
-							adminquery.Handled = true;
-							adminquery.Successful = false;
-						}
-						break;
-					#endregion
+				#region Mutes
+				case "mute":
+				case "unmute":
+					if (plugin.DisableMuting || (plugin.Mute && !plugin.MuteRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
+					{
+						FailedAdminQuery(adminquery, AAQuery[0]);
+					}
+					break;
 
-					#region Mutes
-					case "mute":
-					case "unmute":
-						if (plugin.DisableMuting || (plugin.Mute && !plugin.MuteRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
-						{
-							adminquery.Handled = true;
-							adminquery.Successful = false;
-						}
-						break;
+				case "imute":
+				case "iunmute":
+					if (plugin.Imute && (!plugin.ImuteRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
+					{
+						FailedAdminQuery(adminquery, AAQuery[0]);
+					}
+					break;
+				#endregion
 
-					case "imute":
-					case "iunmute":
-						if (plugin.Imute && (!plugin.ImuteRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
-						{
-							adminquery.Handled = true;
-							adminquery.Successful = false;
-						}
-						break;
-					#endregion
+				#region Door controls
+				case "o":
+				case "open":
+				case "c":
+				case "close":
+					if (plugin.Doors && (!plugin.OpenCloseRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
+					{
+						FailedAdminQuery(adminquery, AAQuery[0]);
+					}
+					break;
 
-					#region Door controls
-					case "o":
-					case "open":
-					case "c":
-					case "close":
-						if (plugin.Doors && (!plugin.OpenCloseRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
-						{
-							adminquery.Handled = true;
-							adminquery.Successful = false;
-						}
-						break;
+				case "l":
+				case "lock":
+				case "ul":
+				case "unlock":
+					if (plugin.Doors && (!plugin.LockUnlockRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
+					{
+						FailedAdminQuery(adminquery, AAQuery[0]);
+					}
+					break;
 
-					case "l":
-					case "lock":
-					case "ul":
-					case "unlock":
-						if (plugin.Doors && (!plugin.LockUnlockRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
-						{
-							adminquery.Handled = true;
-							adminquery.Successful = false;
-						}
-						break;
+				case "destroy":
+					if (plugin.Doors && (!plugin.DestroyRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
+					{
+						FailedAdminQuery(adminquery, AAQuery[0]);
+					}
+					break;
+				#endregion
 
-					case "destroy":
-						if (plugin.Doors && (!plugin.DestroyRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
-						{
-							adminquery.Handled = true;
-							adminquery.Successful = false;
-						}
-						break;
-					#endregion
+				#region Bypass Lockdown and Heal
+				case "bm":
+				case "bypass":
+					if (plugin.Bypass && (!plugin.BypassRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
+					{
+						FailedAdminQuery(adminquery, AAQuery[0]);
+					}
+					break;
 
-					#region Bypass and Lockdown
-					case "bm":
-					case "bypass":
-						if (plugin.Bypass && (!plugin.BypassRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
-						{
-							adminquery.Handled = true;
-							adminquery.Successful = false;
-						}
-						break;
+				case "ld":
+				case "lockdown":
+					if (plugin.Lockdown && (!plugin.LockdownRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
+					{
+						FailedAdminQuery(adminquery, AAQuery[0]);
+					}
+					break;
 
-					case "ld":
-					case "lockdown":
-						if (plugin.Lockdown && (!plugin.LockdownRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
-						{
-							adminquery.Handled = true;
-							adminquery.Successful = false;
-						}
-						break;
-					#endregion
+				case "heal":
+				case "hp":
+					if (plugin.Heal && (!plugin.HealRanks.Contains(ARank) && !plugin.FacilityOverride.Contains(ARank) && !plugin.OverrideRanks.Contains(ARank)))
+					{
+						FailedAdminQuery(adminquery, AAQuery[0]);
+					}
+					break;
+				#endregion
 
-					default:
-						break;
-				}
+				default:
+					break;
 			}
+			//}
 		}
 
 		public void OnPlayerJoin(PlayerJoinEvent player)
@@ -191,13 +190,13 @@ namespace BetterAdmin
 			{
 				plugin.Info("Added " + player.Player.Name + " to the reserved slots");
 				new ReservedSlot(player.Player.IpAddress, player.Player.SteamId, " Studio Global Security - " + player.Player.Name).AppendToFile();
-				player.Player.SendConsoleMessage("You've been given a reserved slot - Global Security");
+				player.Player.SendConsoleMessage("You've been given an automatic reserved slot via BetterAdmin - Global Security");
 			}
 			else if (plugin.StaffResSlot && player.Player.GetAuthToken().Contains("Bypass geo restrictions: YES") && !ReservedSlot.ContainsSteamID(player.Player.SteamId))
 			{
 				plugin.Info("Added " + player.Player.Name + " to the reserved slots");
 				new ReservedSlot(player.Player.IpAddress, player.Player.SteamId, " Studio Staff - " + player.Player.Name).AppendToFile();
-				player.Player.SendConsoleMessage("You've been given a reserved slot - Studio Staff");
+				player.Player.SendConsoleMessage("You've been given an automatic reserved slot via BetterAdmin - Studio Staff");
 			}
 		}
 		public void OnContain106(PlayerContain106Event contevent)
@@ -250,7 +249,7 @@ namespace BetterAdmin
 			if (plugin.AnticampNuke)
 			{
 				List<Smod2.API.Door> doors = plugin.Server.Map.GetDoors();
-				Smod2.API.Door surface = doors.First(x => x.Name == "079_FIRST");
+				Smod2.API.Door surface = doors.First(x => x.Name == "NUKE_SURFACE");
 				if (surface != null)
 				{
 					surface.Open = true;
@@ -263,7 +262,7 @@ namespace BetterAdmin
 			if (plugin.AnticampNuke)
 			{
 				List<Smod2.API.Door> doors = plugin.Server.Map.GetDoors();
-				Smod2.API.Door surface = doors.First(x => x.Name == "079_FIRST");
+				Smod2.API.Door surface = doors.First(x => x.Name == "NUKE_SURFACE");
 				if (surface != null)
 				{
 					surface.Open = true;
@@ -274,6 +273,26 @@ namespace BetterAdmin
 		public void OnWaitingForPlayers(WaitingForPlayersEvent wfp)
 		{
 			GeneratorPowerups = 0;
+		}
+
+
+		void FailedGive(AdminQueryEvent adminquery, string item)
+		{
+			adminquery.Handled = true;
+			adminquery.Successful = false;
+			adminquery.Admin.PersonalBroadcast(3, $"<color=#ff0000ff>You are not permitted to give players item {item}!</color>", false);
+		}
+		void FailedForceClass(AdminQueryEvent adminquery, string role)
+		{
+			adminquery.Handled = true;
+			adminquery.Successful = false;
+			adminquery.Admin.PersonalBroadcast(3, $"<color=#ff0000ff>You are not permitted to forceclass players to role {role}!</color>", false);
+		}
+		void FailedAdminQuery(AdminQueryEvent adminquery, string Command)
+		{
+			adminquery.Handled = true;
+			adminquery.Successful = false;
+			adminquery.Admin.PersonalBroadcast(3, $"<color=#ff0000ff>You are not permitted to use {Command}!</color>", false);
 		}
 	}
 }
