@@ -1,3 +1,7 @@
+# Update
+This plugin is no longer being worked on, due to both lack of interest, and lack of use
+
+
 # BetterAdmin
 Plugin for SCP: Secret Laboratory that allows for blocking item and role spawns
 Also includes a anti-camp feature, that will lock open doors if specific requirements are met, to prevent players from camping inside
